@@ -27,7 +27,7 @@ class Recorder:
                 with open('/home/jardeldyonisio/catkin_ws/src/turtlebot3_teleop_recorder/scripts/recorded_points.txt', 'w') as f:
                     for point in self.points:
                         print("here")
-                        f.write('{} {}\n'.format(point.x, point.y))
+                        f.write('{} {}\n'.format(point.x, point.y, point.z))
                 rospy.loginfo("Recorded points saved to file: recorded_points.txt")
 
 if __name__ == '__main__':
