@@ -40,6 +40,9 @@ Rode o launch do turtlebot3 no mapa world:
 ```
 roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
+```
+roslaunch turtlebot3_navigation turtlebot3_navigation.launch
+```
 
 Agora rode o launch responsável por mover o turtlebot3 utilizando o teclado:
 ```
