@@ -17,9 +17,13 @@ class PathPlanner:
                 x, y = line.strip().split()
                 point = PoseStamped()
                 point.header.frame_id = "map"
-                point.pose.position.x = x
-                point.pose.position.y = y
+                point.pose.position.x = float(x)
+                point.pose.position.y = float(y)
                 point.pose.position.z = 0.0
+                point.pose.orientation.x = 0.0
+                point.pose.orientation.y = 0.0
+                point.pose.orientation.z = 0.0
+                point.pose.orientation.w = 1.0
                 points.append(point)
         return points
 
