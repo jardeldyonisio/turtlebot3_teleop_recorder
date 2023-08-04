@@ -12,7 +12,7 @@ class Recorder:
         self.rate = rospy.Rate(10) # 10hz
         self.points = []
 
-    def callback(self, msg):
+    def callback(self, msg : Odometry):
         x = msg.pose.pose.position.x
         y = msg.pose.pose.position.y
         point = Point(x, y, 0)
