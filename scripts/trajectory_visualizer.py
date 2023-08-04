@@ -11,8 +11,8 @@ marker = Marker()
 marker.header.frame_id = "odom"
 marker.type = marker.POINTS
 marker.action = marker.ADD
-marker.scale.x = 0.1
-marker.scale.y = 0.1
+marker.scale.x = 0.05
+marker.scale.y = 0.05
 marker.color.r = 1.0
 marker.color.a = 1.0
 
