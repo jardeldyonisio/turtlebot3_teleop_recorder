@@ -19,13 +19,11 @@ class Navigator:
         self.goal = np.array([0.5, -0.5])
 
     def obstacle_left(self, data):
-        scan_state = data
         if (min(data[:20]) < 0.4):
             rospy.loginfo("Obstaculo esquerda")
             return True
 
     def obstacle_right(self, data):
-        scan_state = data
         if (min(data[-20:]) < 0.4):
             rospy.loginfo("Obstaculo direita")
             return True
@@ -40,7 +38,7 @@ class Navigator:
         else:
             msg.angular.z = .0
             msg.linear.x = .1
-        #self.cmd_vel_pub.publish(msg)
+        # self.cmd_vel_pub.publish(msg)
 
     def odom_callback(self, data : Odometry):
         quaternion = data.pose.pose.orientation 
@@ -68,10 +66,10 @@ class Navigator:
 
         if self.diff_yaw > self.THRESHOLD_YAW:
             msg.linear.x = 0
-            msg.angular.z = -.1
+            msg.angular.z = .1
         elif self.diff_yaw < -self.THRESHOLD_YAW:
             msg.linear.x = 0
-            msg.angular.z = .1
+            msg.angular.z = -.1
         else:
             msg.linear.x = .1
             msg.angular.z = .0
