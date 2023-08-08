@@ -54,7 +54,6 @@ class Navigator:
             else:
                 msg.linear.x = .1
                 msg.angular.z = .0
-            # self.cmd_vel_pub.publish(msg)
         self.cmd_vel_pub.publish(msg)
 
         if self.dist < self.THRESHOLD_DIST:
