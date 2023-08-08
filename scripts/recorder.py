@@ -9,7 +9,7 @@ class Recorder:
         rospy.init_node('recorder', anonymous=True)
         self.sub = rospy.Subscriber('/odom', Odometry, self.callback)
         self.pub = rospy.Publisher('/recorded_points', Point, queue_size=10)
-        self.rate = rospy.Rate(10) # 10hz
+        self.rate = rospy.Rate(100) # 10hz
         self.points = []
 
     def callback(self, msg : Odometry):

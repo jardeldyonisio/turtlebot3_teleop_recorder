@@ -2,6 +2,7 @@
 
 import rospy
 import numpy as np
+import time
 
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
@@ -17,15 +18,14 @@ class Navigator:
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.position_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback, queue_size=10)
         self.goal = np.array([0.5, -0.5])
+        self.obstacle_detected = None
 
     def obstacle_left(self, data):
-        if (min(data[:20]) < 0.4):
-            rospy.loginfo("Obstaculo esquerda")
+        if (min(data[90:]) < 0.4):
             return True
 
     def obstacle_right(self, data):
-        if (min(data[-20:]) < 0.4):
-            rospy.loginfo("Obstaculo direita")
+        if (min(data[-90:]) < 0.4):
             return True
 
     def scan_callback(self, data : LaserScan):
@@ -33,12 +33,37 @@ class Navigator:
         right = self.obstacle_right(data.ranges)
         msg = Twist()
         if left or right:
+            rospy.loginfo("Desviando")
+            # self.obstacle_detected = True
             msg.linear.x = .0
             msg.angular.z = -.1
         else:
+            rospy.loginfo("Sem obstaculos")
+            # self.obstacle_detected = False
             msg.angular.z = .0
             msg.linear.x = .1
-        # self.cmd_vel_pub.publish(msg)
+
+            if self.diff_yaw > self.THRESHOLD_YAW:
+                rospy.loginfo("Rotacionando")
+                msg.linear.x = 0
+                msg.angular.z = .1
+            elif self.diff_yaw < -self.THRESHOLD_YAW:
+                rospy.loginfo("Rotacionando")
+                msg.linear.x = 0
+                msg.angular.z = -.1
+            else:
+                msg.linear.x = .1
+                msg.angular.z = .0
+            # self.cmd_vel_pub.publish(msg)
+        self.cmd_vel_pub.publish(msg)
+
+        if self.dist < self.THRESHOLD_DIST:
+            rospy.loginfo("Atingiu o objetivo")
+            msg.angular.z = .0
+            msg.linear.x = .0
+            self.cmd_vel_pub.publish(msg)
+            return
+
 
     def odom_callback(self, data : Odometry):
         quaternion = data.pose.pose.orientation 
@@ -52,31 +77,11 @@ class Navigator:
         self.dist_vec = self.goal - self.pos
         self.dist = np.linalg.norm(self.dist_vec)
 
-        msg = Twist()
-
-        if self.dist < self.THRESHOLD_DIST:
-            rospy.loginfo(f"Atingiu o objetivo")
-            msg.angular.z = .0
-            msg.linear.x = .0
-            self.cmd_vel_pub.publish(msg)
-            return
-
         self.yaw_d = np.arctan2(self.dist_vec[1], self.dist_vec[0])
         self.diff_yaw = self.yaw_d - self.yaw
 
-        if self.diff_yaw > self.THRESHOLD_YAW:
-            msg.linear.x = 0
-            msg.angular.z = .1
-        elif self.diff_yaw < -self.THRESHOLD_YAW:
-            msg.linear.x = 0
-            msg.angular.z = -.1
-        else:
-            msg.linear.x = .1
-            msg.angular.z = .0
-        self.cmd_vel_pub.publish(msg)
-
-        rospy.loginfo(f"Odom: {self.x:.2f}, {self.y:.2f}, {self.yaw:.2f}")
-        rospy.loginfo(f"Yaw_d: {self.yaw_d:.2f}")
+        # rospy.loginfo(f"Odom: {self.x:.2f}, {self.y:.2f}, {self.yaw:.2f}")
+        # rospy.loginfo(f"Yaw_d: {self.yaw_d:.2f}")
 
 if __name__ == '__main__':
     rospy.init_node('bug1')
