@@ -14,7 +14,7 @@ class Navigator:
     def __init__(self):    
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.position_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback, queue_size=10)
-        self.goals = np.array([[0.5, -1.2], [1.5, 0.0], [1.0, 2.0]])
+        self.goals = np.array([[0.5, -1.2], [1.5, 0.0], [0.0, 2.0],[1.7, 0.5], [1.0, 2.0], [-0.7, 0.7], [-1.5, 0.2], [0.2, -2.0], [0.5, 1.7], [-1.0, -2.0]])
 
     # def read_points_from_file(self, file_path):
     #     with open(file_path, 'r') as f:
