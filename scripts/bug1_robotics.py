@@ -29,11 +29,21 @@ class Navigator:
             return True
         
     def obstacle_left_move(self, data):
-        if (min(data[:10]) > 0.2 and min(data[:10]) < 0.8):
+        if (min(data[:15]) > 0.2 and min(data[:15]) < 0.8):
             return True
         
     def obstacle_right_move(self, data):
         if (min(data[-10:]) < 0.2 and min(data[-10:]) < 0.8):
+            return True
+        
+    def obstacle_left_side(self, data):
+        if (min(data[55:115]) < 0.2):
+            print("tem coisa na esquerda")
+            return True
+        
+    def obstacle_right_side(self, data):
+        if (min(data[-115:-55]) < 0.2):
+            print("tem coisa na direita")
             return True
         
     def scan_callback(self, data : LaserScan):
@@ -41,9 +51,11 @@ class Navigator:
         right_stop = self.obstacle_right_stop(data.ranges)
         left_move = self.obstacle_left_move(data.ranges)
         right_move = self.obstacle_right_move(data.ranges)
+        left_side = self.obstacle_left_side(data.ranges)
+        right_side = self.obstacle_right_side(data.ranges)
         msg = Twist()
 
-        rospy.loginfo("Goals %s", self.goals)
+        # rospy.loginfo("Goals %s", self.goals)
 
         if len(self.goals) == 0:
             msg.angular.z = 0.0
@@ -61,15 +73,33 @@ class Navigator:
         else:
             msg.angular.z = .0
             msg.linear.x = .1
-        self.cmd_vel_pub.publish(msg)
-        if left_move:
-            rospy.loginfo("Andando e desviando para a esquerda")
-            msg.linear.x = .1
-            msg.angular.z = -.1
-        elif right_move:
-            rospy.loginfo("Andando e desviando para a direita")
-            msg.linear.x = .1
-            msg.angular.z = .1
+            if left_side or right_side:
+                rospy.loginfo("Obstaculo no lado")
+                msg.linear.x = .1
+                msg.angular.z = .0
+            elif left_move:
+                rospy.loginfo("Andando e desviando para a esquerda")
+                msg.linear.x = .1
+                msg.angular.z = -.1
+            elif right_move:
+                rospy.loginfo("Andando e desviando para a direita")
+                msg.linear.x = .1
+                msg.angular.z = .1
+            elif left_side or right_side:
+                rospy.loginfo("Obstaculo no lado")
+                msg.linear.x = .1
+                msg.angular.z = .0
+            elif self.diff_yaw > self.THRESHOLD_YAW:
+                rospy.loginfo("Rotacionando")
+                msg.linear.x = .0
+                msg.angular.z = .1
+            elif self.diff_yaw < -self.THRESHOLD_YAW:
+                rospy.loginfo("Rotacionando")
+                msg.linear.x = .0
+                msg.angular.z = -.1
+            else:
+                msg.angular.z = .0
+                msg.linear.x = .1
         self.cmd_vel_pub.publish(msg)
         # else:
         #     rospy.loginfo("Sem obstaculos")
@@ -98,7 +128,7 @@ class Navigator:
                 msg.angular.z = .0
                 msg.linear.x = .0
                 return
-        self.cmd_vel_pub.publish(msg)
+        # self.cmd_vel_pub.publish(msg)
 
 
     def odom_callback(self, data : Odometry):
