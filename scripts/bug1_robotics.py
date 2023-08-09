@@ -21,19 +21,19 @@ class Navigator:
         self.parado_desviando = None
 
     def obstacle_left_stop(self, data):
-        if (min(data[:20]) < 0.2):
+        if (min(data[:40]) < 0.2):
             return True
 
     def obstacle_right_stop(self, data):
-        if (min(data[-20:]) < 0.2):
+        if (min(data[-40:]) < 0.2):
             return True
         
     def obstacle_left_move(self, data):
-        if (min(data[:40]) > 0.2 and min(data[:40]) < 0.8):
+        if (min(data[:10]) > 0.2 and min(data[:10]) < 0.8):
             return True
         
     def obstacle_right_move(self, data):
-        if (min(data[-40:]) < 0.2 and min(data[-40:]) < 0.8):
+        if (min(data[-10:]) < 0.2 and min(data[-10:]) < 0.8):
             return True
         
     def scan_callback(self, data : LaserScan):
@@ -50,32 +50,43 @@ class Navigator:
             msg.linear.x = 0.0
             return
         
-        if left_stop or right_stop:
-            rospy.loginfo("Parado e desviando")
+        if left_stop:
+            rospy.loginfo("Parado e desviando para a esquerda")
             msg.linear.x = .0
             msg.angular.z = -.1
-        elif left_move or right_move:
-            rospy.loginfo("Andando e desviando")
-            msg.linear.x = .1
-            msg.angular.z = -.1
+        elif right_stop:
+            rospy.loginfo("Parado e desviando para a direita")
+            msg.linear.x = .0
+            msg.angular.z = .1
         else:
-            rospy.loginfo("Sem obstaculos")
             msg.angular.z = .0
             msg.linear.x = .1
-            time.sleep(0.5)
-            if self.diff_yaw > self.THRESHOLD_YAW:
-                rospy.loginfo("Rotacionando")
-                msg.linear.x = .0
-                msg.angular.z = .1
-                msg.angular.x = .05
-            elif self.diff_yaw < -self.THRESHOLD_YAW:
-                rospy.loginfo("Rotacionando")
-                msg.linear.x = .0
-                msg.angular.z = -.1
-                msg.angular.x = .05
-            else:
-                msg.linear.x = .1
-                msg.angular.z = .0
+        self.cmd_vel_pub.publish(msg)
+        if left_move:
+            rospy.loginfo("Andando e desviando para a esquerda")
+            msg.linear.x = .1
+            msg.angular.z = -.1
+        elif right_move:
+            rospy.loginfo("Andando e desviando para a direita")
+            msg.linear.x = .1
+            msg.angular.z = .1
+        self.cmd_vel_pub.publish(msg)
+        # else:
+        #     rospy.loginfo("Sem obstaculos")
+        #     msg.angular.z = .0
+        #     msg.linear.x = .1
+        #     time.sleep(0.5)
+        #     if self.diff_yaw > self.THRESHOLD_YAW:
+        #         rospy.loginfo("Rotacionando")
+        #         msg.linear.x = .0
+        #         msg.angular.z = .1
+        #     elif self.diff_yaw < -self.THRESHOLD_YAW:
+        #         rospy.loginfo("Rotacionando")
+        #         msg.linear.x = .0
+        #         msg.angular.z = -.1
+        #     else:
+        #         msg.linear.x = .1
+        #         msg.angular.z = .0
 
         if self.dist < self.THRESHOLD_DIST:
             rospy.loginfo("Atingiu o objetivo")
