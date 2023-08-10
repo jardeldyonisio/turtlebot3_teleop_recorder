@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import time
 import rospy
 import numpy as np
 
@@ -14,28 +15,21 @@ class Navigator:
     def __init__(self):    
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.position_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback, queue_size=10)
-        self.goals = np.array([[0.5, -1.2], [1.5, 0.0], [0.0, 2.0],[1.7, 0.5], [1.0, 2.0], [-0.7, 0.7], [-1.5, 0.2], [0.2, -2.0], [0.5, 1.7], [-1.0, -2.0]])
 
-    # def read_points_from_file(self, file_path):
-    #     with open(file_path, 'r') as f:
-    #         for line in f:
-    #             x, y = line.strip().split()
-    #             point = PoseStamped()
-    #             point.header.frame_id = "map"
-    #             point.pose.position.x = float(x)
-    #             point.pose.position.y = float(y)
-    #             point.pose.position.z = 0.0
-    #             point.pose.orientation.x = 0.0
-    #             point.pose.orientation.y = 0.0
-    #             point.pose.orientation.z = 0.0
-    #             point.pose.orientation.w = 1.0
-    #             self.goals.append(point)
-    #     return self.goals
+        self.read_points_from_file('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/scripts/recorded_points.txt')
+
+    def read_points_from_file(self, file_path):
+        self.goals = np.array([[]])
+        with open(file_path, 'r') as f:
+            for line in f:
+                x, y = line.strip().split()
+                point = np.array([[float(x), float(y)]])
+                self.goals = np.append(self.goals, point, axis = 0)
+        return
 
     def odom_callback(self, data: Odometry):
         msg = Twist()
 
-        # Se não houver metas definidas, não faça nada
         if len(self.goals) == 0:
             msg.angular.z = 0.0
             msg.linear.x = 0.0
@@ -50,7 +44,7 @@ class Navigator:
 
         self.pos = np.array([self.x, self.y])
 
-        goal = self.goals[0]  # Obtenha o próximo objetivo da lista
+        goal = self.goals[0]
         goal_vec = np.array(goal)
         self.dist_vec = goal_vec - self.pos
         self.dist = np.linalg.norm(self.dist_vec)
@@ -61,11 +55,9 @@ class Navigator:
         print("Goals", self.goals)
     
         if self.diff_yaw > self.THRESHOLD_YAW:
-            # rospy.loginfo("Rotacionando")
             msg.linear.x = .0
             msg.angular.z = .1
         elif self.diff_yaw < -self.THRESHOLD_YAW:
-            # rospy.loginfo("Rotacionando")
             msg.linear.x = .0
             msg.angular.z = -.1
         else:
@@ -77,7 +69,9 @@ class Navigator:
             msg.angular.z = .0
             msg.linear.x = .0
             self.goals = np.delete(self.goals, 0, 0)
-            rospy.loginfo(self.goals) # Remova o objetivo atual da lista
+            self.cmd_vel_pub.publish(msg)
+            time.sleep(3)
+            rospy.loginfo(self.goals)
             if len(self.goals) == 0:
                 rospy.loginfo("Objetivos concluídos")
                 msg.angular.z = .0
