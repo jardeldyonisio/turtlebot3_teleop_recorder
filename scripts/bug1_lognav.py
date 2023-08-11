@@ -19,7 +19,7 @@ class Navigator:
         self.read_points_from_file('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/scripts/recorded_points.txt')
 
     def read_points_from_file(self, file_path):
-        self.goals = np.array([[]])
+        self.goals = np.array([[-2.0, -0.49]])
         with open(file_path, 'r') as f:
             for line in f:
                 x, y = line.strip().split()
@@ -70,7 +70,6 @@ class Navigator:
             msg.linear.x = .0
             self.goals = np.delete(self.goals, 0, 0)
             self.cmd_vel_pub.publish(msg)
-            time.sleep(3)
             rospy.loginfo(self.goals)
             if len(self.goals) == 0:
                 rospy.loginfo("Objetivos concluídos")
