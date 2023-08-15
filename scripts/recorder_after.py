@@ -24,7 +24,7 @@ class Recorder:
             for point in self.points:
                 self.pub.publish(point)
                 self.rate.sleep()
-                with open('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/scripts/recorded_points.txt', 'w') as f:
+                with open('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_after.txt', 'w') as f:
                     for point in self.points:
                         print("here")
                         f.write('{} {}\n'.format(point.x, point.y, point.z))

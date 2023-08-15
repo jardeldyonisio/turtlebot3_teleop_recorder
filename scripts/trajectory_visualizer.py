@@ -29,7 +29,7 @@ marker.color.a = 1.0
 #ponto.z = 0
 #marker.points.append(ponto)
 
-with open('recorded_points.txt', 'r') as f:
+with open('recorded_before.txt', 'r') as f:
     for line in f:
         ponto = Point()
         x, y = line.strip().split()

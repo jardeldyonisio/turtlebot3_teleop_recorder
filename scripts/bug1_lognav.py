@@ -16,7 +16,7 @@ class Navigator:
         self.cmd_vel_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         self.position_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback, queue_size=10)
 
-        self.read_points_from_file('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/scripts/recorded_points.txt')
+        self.read_points_from_file('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/scripts/recorded_before.txt')
 
     def read_points_from_file(self, file_path):
         self.goals = np.array([[-2.0, -0.49]])
