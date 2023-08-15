@@ -26,9 +26,8 @@ class Recorder:
                 self.rate.sleep()
                 with open('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_after.txt', 'w') as f:
                     for point in self.points:
-                        print("here")
-                        f.write('{} {}\n'.format(point.x, point.y, point.z))
-                rospy.loginfo("Recorded points saved to file: recorded_points.txt")
+                        f.write('{},{}\n'.format(point.x, point.y))
+            rospy.loginfo("Recorded points saved to file: recorded_points.txt")
 
 if __name__ == '__main__':
     try:

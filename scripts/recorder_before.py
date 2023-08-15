@@ -15,7 +15,7 @@ class Recorder:
     def callback(self, msg : Odometry):
         x = msg.pose.pose.position.x
         y = msg.pose.pose.position.y
-        point = Point(x, y, 0)
+        point = Point(x, y)
         self.points.append(point)
         print(self.points)
 
@@ -24,10 +24,9 @@ class Recorder:
             for point in self.points:
                 self.pub.publish(point)
                 self.rate.sleep()
-                with open('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_before.txt', 'w') as f:
+                with open('/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/scripts/recorded_before.txt', 'w') as f:
                     for point in self.points:
-                        print("here")
-                        f.write('{} {}\n'.format(point.x, point.y, point.z))
+                        f.write('{},{}\n'.format(point.x, point.y))
                 rospy.loginfo("Recorded points saved to file: recorded_points.txt")
 
 if __name__ == '__main__':

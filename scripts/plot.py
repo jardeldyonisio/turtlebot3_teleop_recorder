@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-file = '/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/scripts/recorded_before.txt'
+file = '/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_before.txt'
 SAMPLE_RATIO = 50
 length_before = round(sum(1 for _ in open(file)) / 100, 0)
 print(length_before)
