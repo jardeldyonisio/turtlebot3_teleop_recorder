@@ -31,19 +31,14 @@ Siga as instruções para gravar e carregar o path realizado pelo turtlebot3.
 
 ### Executando o turtlebot3
 
-Carregue o robô burguer:
-```
-export TURTLEBOT3_MODEL=burger
-```
-
 Rode o launch do turtlebot3 no mapa world:
 ```
 roslaunch turtlebot3_gazebo turtlebot3_world.launch
 ```
+Rode o launch de navegação:
 ```
 roslaunch turtlebot3_navigation turtlebot3_navigation.launch
 ```
-
 Agora rode o launch responsável por mover o turtlebot3 utilizando o teclado:
 ```
 roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
@@ -63,7 +58,9 @@ Para mostrar no Rviz o path executado pelo turtlebot3, você pode rodar o seguin
 ./trajectory_visualizer.py
 ```
 
-[Confira aqui o vídeo de funcionamento do pacote](https://youtu.be/eSORJADcSzg)
+No Rviz, você deve ir em 'add' e selecionar o marker para aparecer a trajetória gravada.
+
+[Confira aqui o vídeo de funcionamento do pacote](https://www.youtube.com/watch?v=pz3rTLs5pZE)
 
 <p align="center"> 
   <i>If you liked this repository, please don't forget to starred it!</i>
