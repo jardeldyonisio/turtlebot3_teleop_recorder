@@ -8,7 +8,7 @@ class PathPlanner:
     def __init__(self):
         rospy.init_node('path_planner', anonymous=True)
         self.pub = rospy.Publisher('/move_base/NavfnROS/plan', Path, queue_size=10)
-        self.rate = rospy.Rate(10) # 10hz
+        self.rate = rospy.Rate(10)
 
     def read_points_from_file(self, file_path):
         points = []
