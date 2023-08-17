@@ -6,7 +6,6 @@ Esse pacote é utilizado para gravar a trajetória realizada pela turtlebot3 e m
 
 - Ubuntu;
 - [ROS Noetic;](http://wiki.ros.org/noetic/Installation/Ubuntu)
-- [Pacotes do Turtlebot3.](https://emanual.robotis.com/docs/en/platform/turtlebot3/quick-start/#pc-setup)
 
 Clone na pasta src que está no seu catkin_ws
 ```
@@ -15,16 +14,11 @@ git clone https://github.com/jardeldyonisio/turtlebot3_teleop_recorder.git
 
 ## Preparando o pacote
 
-Acesse a pasta
+Compile o package no seu catkin_ws
 ```
-cd ~/catkin_ws/src
+catkin_make
 ```
 
-Torne executável os scripts:
-```
-sudo chmod +x recorder.py
-sudo chmod +x trajectory_visualizer.py
-```
 ## Passos para testar
 
 Siga as instruções para gravar e carregar o path realizado pelo turtlebot3.
@@ -33,29 +27,26 @@ Siga as instruções para gravar e carregar o path realizado pelo turtlebot3.
 
 Rode o launch do turtlebot3 no mapa world:
 ```
-roslaunch turtlebot3_gazebo turtlebot3_world.launch
-```
-Rode o launch de navegação:
-```
-roslaunch turtlebot3_navigation turtlebot3_navigation.launch
+roslaunch turtlebot3_teleop_recorder world_navigation.launch
 ```
 Agora rode o launch responsável por mover o turtlebot3 utilizando o teclado:
 ```
 roslaunch turtlebot3_teleop turtlebot3_teleop_key.launch
 ```
+Dessa forma, você vai poder controlar o robô pelo mapa.
 
 ### Executando os scripts
 
-Para começar a gravar a trajetória feita pelo robô, acesse a pasta script e execute o comando:
+Para começar a gravar a trajetória feita pelo robô e execute o comando:
 ```
-./recorder.py
+rosrun turtlebot3_teleop_recorder recorder_points.py
 ```
 Quando você não desejar mais gravar o path, você pode encerrar com as teclas CTRL + C
 
 Para mostrar no Rviz o path executado pelo turtlebot3, você pode rodar o seguinte comando na pasta scripts:
 
 ```
-./trajectory_visualizer.py
+rosrun turtlebot3_teleop_recorder points_visualizer.py
 ```
 
 No Rviz, você deve ir em 'add' e selecionar o marker para aparecer a trajetória gravada.
