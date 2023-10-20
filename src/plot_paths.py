@@ -2,8 +2,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 SAMPLE_RATIO = 50
+
 file_before = '/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_before.txt'
 file_after = '/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_after.txt'
+
 length_before = round(sum(1 for _ in open(file_before)) / 50, 0)
 length_after = sum(1 for _ in open(file_after))
 
@@ -18,6 +20,8 @@ with open(file_before, 'r') as f:
             y_before.append(float(y0))
     x_before= np.array(x_before)
     y_before= np.array(y_before)
+    points = np.vstack((x_before, y_before)).T
+    print("Points: ", points)
 
 ratio_lengths = round(length_after / length_before, 0)
 
