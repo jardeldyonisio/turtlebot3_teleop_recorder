@@ -3,7 +3,6 @@
 import rospy
 import numpy as np
 from nav_msgs.msg import Odometry
-from your_package_name import tugger  # Substitua 'your_package_name' pelo nome do seu pacote
 
 LOOKAHEAD_ANGLESPAN = np.pi / 2.0
 LOOKAHEAD_TOTALPATHS = 100
