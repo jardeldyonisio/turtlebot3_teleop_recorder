@@ -23,6 +23,7 @@ def draw_bezier_points(num_points, rate, step):
     t_values = np.arange(0.0, 1.0, step)
     points = curve.evaluate_multi(t_values).T 
     new_zero = 0
+    num_points_referee = num_points
 
     rate = rospy.Rate(rate)
 
@@ -40,30 +41,20 @@ def draw_bezier_points(num_points, rate, step):
     marker.color.a = 1.0
     
     for t in t_values:
-        # Adiciona o ponto selecionado ao Marker
-        for p in points[new_zero:num_points]:
+        for p in points[new_zero:num_points_referee]:
             selected_point = Point()
             selected_point.x, selected_point.y = p[0], p[1]
             marker.points.append(selected_point)
 
             if len(marker.points) > num_points:
-                marker.points.pop(0)
-                num_points += 1
+                # marker.points.pop(0)
+                print("marker.points before: ", marker.points)
+                marker.points = marker.points[-5:]
+                print("marker.points after: ", marker.points)
+                num_points_referee += 1
                 new_zero += 1
 
-        # Publica o Marker
-        if len(marker.points) == num_points:
-            # Publica o Marker
-            marker_pub.publish(marker)
-            print("len(marker.points) :", len(marker.points))
-        elif len(marker.points) > num_points:
-            # Remove todos os pontos exceto os últimos 5
-            print("marker.points before: ", marker.points)
-            marker.points = marker.points[-5:]
-            print("marker.points after: ", marker.points)
-            marker_pub.publish(marker)
-            asdad
-
+        marker_pub.publish(marker)
         rate.sleep()
 
 if __name__ == '__main__':
