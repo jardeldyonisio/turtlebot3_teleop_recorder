@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 
 import rospy
-from visualization_msgs.msg import Marker
-from geometry_msgs.msg import Point
 import bezier
 import numpy as np
 
-def draw_bezier_points(num_points, duration):
+from geometry_msgs.msg import Point
+from visualization_msgs.msg import Marker
+
+def draw_bezier_points(num_points, rate, step):
     # Inicialize o nó ROS
     rospy.init_node('draw_bezier_point', anonymous=True)
     
@@ -19,45 +20,54 @@ def draw_bezier_points(num_points, duration):
 
     # Configuração da curva de Bezier
     curve = bezier.Curve(ctrl_pts, degree=57)
-    vals = np.linspace(0.0, 1.0, num=20)
-    points = curve.evaluate_multi(vals).T 
+    t_values = np.arange(0.0, 1.0, step)
+    points = curve.evaluate_multi(t_values).T 
+    new_zero = 0
 
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(rate)
+
+    # Configura o Marker
+    marker = Marker()
+    marker.header.frame_id = "odom"
+    marker.type = Marker.POINTS
+    marker.action = Marker.ADD
+    marker.pose.orientation.w = 1.0
+    marker.scale.x = 0.05
+    marker.scale.y = 0.05
+    marker.color.r = 0.0
+    marker.color.g = 1.0
+    marker.color.b = 0.0
+    marker.color.a = 1.0
     
-    t_values = np.arange(0.0, 1.0, 0.01)
-
     for t in t_values:
-        if rospy.is_shutdown():
-            break
+        # Adiciona o ponto selecionado ao Marker
+        for p in points[new_zero:num_points]:
+            selected_point = Point()
+            selected_point.x, selected_point.y = p[0], p[1]
+            marker.points.append(selected_point)
 
-        # Calcula a posição correspondente na curva de Bezier
-        point = curve.evaluate(t)
-
-        # Configure o Marker
-        marker = Marker()
-        marker.header.frame_id = "odom"  # Substitua pelo seu frame
-        marker.type = Marker.POINTS
-        marker.action = Marker.ADD
-        marker.pose.orientation.w = 1.0
-        marker.scale.x = 0.05  # Tamanho dos pontos
-        marker.scale.y = 0.05
-        marker.color.r = 0.0
-        marker.color.g = 1.0
-        marker.color.b = 0.0
-        marker.color.a = 1.0
-
-        # Adicione o ponto selecionado ao Marker
-        selected_point = Point()
-        selected_point.x, selected_point.y = point
-        marker.points.append(selected_point)
+            if len(marker.points) > num_points:
+                marker.points.pop(0)
+                num_points += 1
+                new_zero += 1
 
         # Publica o Marker
-        marker_pub.publish(marker)
+        if len(marker.points) == num_points:
+            # Publica o Marker
+            marker_pub.publish(marker)
+            print("len(marker.points) :", len(marker.points))
+        elif len(marker.points) > num_points:
+            # Remove todos os pontos exceto os últimos 5
+            print("marker.points before: ", marker.points)
+            marker.points = marker.points[-5:]
+            print("marker.points after: ", marker.points)
+            marker_pub.publish(marker)
+            asdad
 
         rate.sleep()
 
 if __name__ == '__main__':
     try:
-        draw_bezier_points(num_points=10, duration=10)  # Exemplo: 10 pontos em 10 segundos
+        draw_bezier_points(num_points = 5, rate = 1, step = 0.01)
     except rospy.ROSInterruptException:
         pass

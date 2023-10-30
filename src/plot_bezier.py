@@ -6,7 +6,7 @@ from geometry_msgs.msg import Point
 import bezier
 import numpy as np
 
-def draw_bezier_curve():
+def draw_bezier_curve(num_points = 20):
     # Inicialize o nó ROS
     rospy.init_node('draw_bezier_curve', anonymous=True)
     
@@ -18,8 +18,9 @@ def draw_bezier_curve():
                          [-0.60320651, -0.62260841, -0.69106883, -0.82453109, -0.96769995, -1.27829224, -1.37491497, -1.41410857, -1.42612812, -1.41626638, -1.40840071, -1.40734423, -1.35978003, -1.32483699, -1.27493852, -1.21207157, -1.07797256, -0.92630468, -0.78108789, -0.56134365, -0.34715512, -0.12820093, 0.02594934, 0.16493713, 0.31922918, 0.391433, 0.46722684, 0.51972223, 0.56275177, 0.57848699, 0.60025459, 0.66866977, 0.70002962, 0.66786697, 0.6511831, 0.62386616, 0.5450193, 0.43771095, 0.28122597, 0.15004509, -0.04453553, -0.28932078, -0.42013758, -0.44135891, -0.42962179, -0.45363579, -0.47332969, -0.52635361, -0.52443446, -0.51003401, -0.23246536, -0.10291448, 0.07319822, 0.23222491, 0.37252653, 0.43923176, 0.46746287, 0.52701975]])
 
     # Configuração da curva de Bezier
-    curve = bezier.Curve(ctrl_pts, degree=57)
-    vals = np.linspace(0.0, 1.0, num=20)
+    ctrl_pts_degree = len(ctrl_pts.T)
+    curve = bezier.Curve(ctrl_pts, ctrl_pts_degree - 1)
+    vals = np.linspace(0.0, 1.0, num_points)
     points = curve.evaluate_multi(vals).T  # Transpor para ter as coordenadas certas
 
     # Configure o Marker
@@ -36,7 +37,7 @@ def draw_bezier_curve():
 
     for p in points:
         point = Point()
-        point.x, point.y, point.z = p[0], p[1], 0.0
+        point.x, point.y = p[0], p[1]
         print("point: ", point)
         marker.points.append(point)
 
