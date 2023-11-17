@@ -11,7 +11,7 @@ class Recorder:
         self.sub = rospy.Subscriber('/odom', Odometry, self.callback)
         self.rate = rospy.Rate(50) # 10hz
         self.points = []
-        self.file_path = '/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_after.txt'
+        self.file_path = '/home/jardeldyonisio/lognav_ws/src/turtlebot3_teleop_recorder/data/recorded_before.txt'
 
     def callback(self, msg : Odometry):
         x = msg.pose.pose.position.x
